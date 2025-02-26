@@ -49,19 +49,31 @@ def save_caption_to_sheet(image_ids, user_id, captions, sheet):
 
 def main():
     image_list = json.load(open('data/chosen_100_train2017_0.json'))
+    caption_length = 50
+
     st.title("Image Captioning App")
-    st.write("Input your Prolific ID below:")
+    st.write(" ")
+    st.write(" ")
+    st.markdown("**Input your Prolific ID below:**")
     user_id = st.text_input("Prolific ID")
+    if not user_id:
+        st.error("Please enter your User ID.")
+    st.write(" ")
 
     st.write(" ")
-    st.write("Describe each image, following these instructions:")
-    st.write("- Describe all the important parts of the scene.")
-    st.write("- Do not start the sentences with \"There is\".")
-    st.write("- Do not describe unimportant details.")
-    st.write("- Do not describe things that might have happened in the future or past.")
-    st.write("- Do not describe what a person might say.")
-    st.write("- Do not give people proper names.")
-    st.write("- The sentences should contain at least 10 words")
+    st.write(" ")
+    st.write("**Below are 10 images. Write a description for each image, following these instructions:**")
+    st.write("- Describe all the :blue[important parts] of the scene.")
+    st.write("- :red[Do not] start the sentences with \"There is\".")
+    st.write("- :red[Do not] describe unimportant details.")
+    st.write("- :red[Do not] describe things that might have happened in the future or past.")
+    st.write("- :red[Do not] describe what a person might say.")
+    st.write("- :red[Do not] give people proper names.")
+    st.write("- The sentences should contain at least :blue[{} words].".format(caption_length))
+    st.write(" ")
+    st.write("Note: The word counter may take a second to refresh as you type; click outside the text area to see the updated count.")
+    st.write(" ")
+    st.write(" ")
     st.write(" ")
     
     # Load uncaptioned images
@@ -78,21 +90,22 @@ def main():
     captions = []
 
     for i in range(10):
-        st.write("Image {}:".format(i))
+        st.write("**Image {}:**".format(i+1))
         st.image('data/{}'.format(image_ids[i]), use_container_width=True)
-        caption = st.text_area("Caption Image {}".format(i))
+        caption = st.text_area("Caption Image {}".format(i+1))
         st.write("Number of words: ", len(caption.split()))
-        if len(caption.split())<10:
-            st.write(":red[Caption less than 10 words!]")
+        if len(caption.split()) < caption_length:
+            # st.write(":red[Caption less than {} words!]".format(caption_length))
+            st.error("Please enter a caption of at least {} words.".format(caption_length))
         captions.append(caption)
 
     if st.button("Submit Caption"):
-        if user_id and sum([1 for c in captions if c and len(c.split())>=10])==10:
+        if user_id and sum([1 for c in captions if c and len(c.split()) >= caption_length]) == 10:
             save_caption_to_sheet(image_ids, user_id, captions, sheet)
-            st.success("Caption submitted and saved to Google Sheets!")
-            st.write("Your success code is 1234")
+            st.success("Captions submitted!")
+            st.success("Your success code is **1234**. Copy and paste it in Prolific to complete this task.")
         else:
-            st.warning("Please enter your User ID and all captions of sufficient length before submitting.")
+            st.error("Please enter your User ID and all captions of sufficient length before submitting.")
     
 
 if __name__ == "__main__":
