@@ -7,6 +7,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import pandas as pd
+import json
 
 # Function to connect to Google Sheets
 def get_gsheet():
@@ -47,40 +48,20 @@ def save_caption_to_sheet(image_ids, user_id, captions, sheet):
 #     sheet.append_row([pid, image_id, caption])  # Append caption to the sheet
 
 def main():
-    image_list = ["https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Felis_silvestris_silvestris_Luc_Viatour.jpg/1280px-Felis_silvestris_silvestris_Luc_Viatour.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/1/1d/Katzepasstauf_%282009_photo%3B_cropped_2022%29_%28cropped%29.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chin_posing.jpg/1920px-Chin_posing.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/d/d5/Retriever_in_water.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Black_Labrador_Retriever_-_Male_IMG_3323.jpg/2560px-Black_Labrador_Retriever_-_Male_IMG_3323.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Felis_silvestris_silvestris_Luc_Viatour.jpg/1280px-Felis_silvestris_silvestris_Luc_Viatour.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/1/1d/Katzepasstauf_%282009_photo%3B_cropped_2022%29_%28cropped%29.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chin_posing.jpg/1920px-Chin_posing.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/d/d5/Retriever_in_water.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Black_Labrador_Retriever_-_Male_IMG_3323.jpg/2560px-Black_Labrador_Retriever_-_Male_IMG_3323.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Felis_silvestris_silvestris_Luc_Viatour.jpg/1280px-Felis_silvestris_silvestris_Luc_Viatour.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/1/1d/Katzepasstauf_%282009_photo%3B_cropped_2022%29_%28cropped%29.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chin_posing.jpg/1920px-Chin_posing.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/d/d5/Retriever_in_water.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Black_Labrador_Retriever_-_Male_IMG_3323.jpg/2560px-Black_Labrador_Retriever_-_Male_IMG_3323.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Felis_silvestris_silvestris_Luc_Viatour.jpg/1280px-Felis_silvestris_silvestris_Luc_Viatour.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/1/1d/Katzepasstauf_%282009_photo%3B_cropped_2022%29_%28cropped%29.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chin_posing.jpg/1920px-Chin_posing.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/d/d5/Retriever_in_water.jpg",
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Black_Labrador_Retriever_-_Male_IMG_3323.jpg/2560px-Black_Labrador_Retriever_-_Male_IMG_3323.jpg",
-                  ]
-
+    image_list = json.load(open('data/chosen_100_train2017_0.json'))
     st.title("Image Captioning App")
     st.write("Input your Prolific ID below:")
     user_id = st.text_input("Prolific ID")
 
     st.write(" ")
-    st.write("INSTRUCTIONS")
-    st.write("INSTRUCTIONS")
-    st.write("INSTRUCTIONS")
+    st.write("Describe each image, following these instructions:")
+    st.write("- Describe all the important parts of the scene.")
+    st.write("- Do not start the sentences with \"There is\".")
+    st.write("- Do not describe unimportant details.")
+    st.write("- Do not describe things that might have happened in the future or past.")
+    st.write("- Do not describe what a person might say.")
+    st.write("- Do not give people proper names.")
+    st.write("- The sentences should contain at least 10 words")
     st.write(" ")
     
     # Load uncaptioned images
@@ -98,10 +79,10 @@ def main():
 
     for i in range(10):
         st.write("Image {}:".format(i))
-        st.image(image_list[image_ids[i]], use_container_width=True)
+        st.image('data/{}'.format(image_ids[i]), use_container_width=True)
         caption = st.text_area("Caption Image {}".format(i))
         st.write("Number of words: ", len(caption.split()))
-        if len(caption.split())<=10:
+        if len(caption.split())<10:
             st.write(":red[Caption less than 10 words!]")
         captions.append(caption)
 
