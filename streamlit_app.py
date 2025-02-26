@@ -42,7 +42,6 @@ def save_caption_to_sheet(image_ids, user_id, captions, sheet):
         for i, c in enumerate(captions):
             sheet.update_cell(row_number, 12+i, c)
 
-
 # def save_caption_to_sheet(pid, image_id, caption):
 #     sheet = get_gsheet()
 #     sheet.append_row([pid, image_id, caption])  # Append caption to the sheet
@@ -84,75 +83,35 @@ def main():
     st.write("INSTRUCTIONS")
     st.write(" ")
     
-    # Initialize session state for tracking user progress
-    # if "caption_count" not in st.session_state:
-    #     st.session_state.caption_count = 0
-
-    # Stop users after 2 captions
-    # if st.session_state.caption_count >= 2:
-    #     st.success("You've reached your limit of 2 captions. Thank you for your contributions! 🎉")
-    #     return
-    
     # Load uncaptioned images
     uncaptioned_df, sheet = get_uncaptioned_images()
 
+    # You shouldn't reach here:
     if uncaptioned_df.empty:
         st.success("All images have been captioned! 🎉")
         return
 
     # Select an image that needs a caption
-    image_row = uncaptioned_df.iloc[0]  # Take the first uncaptioned image
+    image_row = uncaptioned_df.iloc[0]  # Take the first uncaptioned row
     image_ids = [image_row["ImageID{}".format(i)] for i in range(10)]
-    # image_id = image_row["ImageID"]
     captions = []
 
     for i in range(10):
         st.write("Image {}:".format(i))
         st.image(image_list[image_ids[i]], use_container_width=True)
         caption = st.text_area("Caption Image {}".format(i))
+        st.write("Number of words: ", len(caption.split()))
+        if len(caption.split())<=10:
+            st.write(":red[Caption less than 10 words!]")
         captions.append(caption)
 
     if st.button("Submit Caption"):
-        if user_id and sum([1 for c in captions if c])==10:
+        if user_id and sum([1 for c in captions if c and len(c.split())>=10])==10:
             save_caption_to_sheet(image_ids, user_id, captions, sheet)
             st.success("Caption submitted and saved to Google Sheets!")
+            st.write("Your success code is 1234")
         else:
-            st.warning("Please enter your User ID and all captions before submitting.")
-
-
-    # Caption input
-    # caption = st.text_area("Write your caption:")
-
-    # if st.button("Submit Caption"):
-    #     if user_id and caption:
-    #         save_caption_to_sheet(image_id, user_id, caption, sheet)
-    #         st.success("Caption submitted and saved to Google Sheets!")
-
-    #         # Increment session count
-    #         st.session_state.caption_count += 1
-            
-    #         st.rerun()  # Refresh to show the next image
-    #     else:
-    #         st.warning("Please enter your User ID and a caption before submitting.")
-
-    # st.write("Caption the images below:")
-    # st.write("Image 1:")
-    # uploaded_file = Image.open(BytesIO(requests.get("https://media.4-paws.org/9/c/9/7/9c97c38666efa11b79d94619cc1db56e8c43d430/Molly_006-2829x1886-2726x1886-1920x1328.jpg").content))
-    # st.image(uploaded_file, use_container_width=True)
-    # caption1 = st.text_input("Write your caption for Image 1")
-
-    # st.write("Image 2:")
-    # uploaded_file = Image.open(BytesIO(requests.get("https://i.natgeofe.com/n/4f5aaece-3300-41a4-b2a8-ed2708a0a27c/domestic-dog_thumb_4x3.jpg").content))
-    # st.image(uploaded_file, use_container_width=True)
-    # caption2 = st.text_input("Write your caption for Image 2")
-
-    # if st.button("Submit Caption"):
-    #     if prolific_id and caption1 and caption2:
-    #         save_caption_to_sheet(prolific_id, 1, caption1)
-    #         save_caption_to_sheet(prolific_id, 2, caption2)
-    #         st.success("Captions submitted and saved to Google Sheets!")
-    #     else:
-    #         st.warning("Please write your ID and all captions before submitting.")
+            st.warning("Please enter your User ID and all captions of sufficient length before submitting.")
     
 
 if __name__ == "__main__":
