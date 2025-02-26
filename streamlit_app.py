@@ -48,7 +48,7 @@ def save_caption_to_sheet(image_ids, user_id, captions, sheet):
 #     sheet.append_row([pid, image_id, caption])  # Append caption to the sheet
 
 def main():
-    image_list = json.load(open('data/chosen_100_train2017_0.json'))
+    # image_list = json.load(open('data/chosen_100_train2017_0.json'))
     caption_length = 50
 
     st.title("Image Captioning App")
@@ -81,7 +81,8 @@ def main():
 
     # You shouldn't reach here:
     if uncaptioned_df.empty:
-        st.success("All images have been captioned! 🎉")
+        # st.success("All images have been captioned!")
+        st.error("There was an error, sorry!")
         return
 
     # Select an image that needs a caption
@@ -91,7 +92,7 @@ def main():
 
     for i in range(10):
         st.write("**Image {}:**".format(i+1))
-        st.image('data/{}'.format(image_ids[i]), use_container_width=True)
+        st.image('data/{}'.format(image_ids[i]), use_container_width=True, )
         caption = st.text_area("Caption Image {}".format(i+1))
         st.write("Number of words: ", len(caption.split()))
         if len(caption.split()) < caption_length:
@@ -103,9 +104,9 @@ def main():
         if user_id and sum([1 for c in captions if c and len(c.split()) >= caption_length]) == 10:
             save_caption_to_sheet(image_ids, user_id, captions, sheet)
             st.success("Captions submitted!")
-            st.success("Your success code is **1234**. Copy and paste it in Prolific to complete this task.")
+            st.success("Your success code is **C1KFDNBZ**. Copy and paste it in Prolific to complete this task.")
         else:
-            st.error("Please enter your User ID and all captions of sufficient length before submitting.")
+            st.error("Please enter your Prolific ID and all captions of sufficient length before submitting.")
     
 
 if __name__ == "__main__":
