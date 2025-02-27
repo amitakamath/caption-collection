@@ -49,7 +49,7 @@ def save_caption_to_sheet(image_ids, user_id, captions, sheet):
 
 def main():
     # image_list = json.load(open('data/chosen_100_train2017_0.json'))
-    caption_length = 50
+    caption_length = 30
 
     st.title("Image Captioning App")
     st.write(" ")
