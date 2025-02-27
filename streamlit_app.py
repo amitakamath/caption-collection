@@ -49,12 +49,13 @@ def save_caption_to_sheet(image_ids, user_id, captions, sheet):
 
 def main():
     # image_list = json.load(open('data/chosen_100_train2017_0.json'))
-    caption_length = 30
+    caption_length = 8
 
     st.title("Image Captioning App")
+
     st.write(" ")
     st.write(" ")
-    st.markdown("**Input your Prolific ID below:**")
+    st.markdown("#### Input your Prolific ID below: ####")
     user_id = st.text_input("Prolific ID")
     if not user_id:
         st.error("Please enter your User ID.")
@@ -62,19 +63,28 @@ def main():
 
     st.write(" ")
     st.write(" ")
-    st.write("**Below are 10 images. Write a description for each image, following these instructions:**")
-    st.write("- Describe all the :blue[important parts] of the scene.")
-    st.write("- :red[Do not] start the sentences with \"There is\".")
-    st.write("- :red[Do not] describe unimportant details.")
-    st.write("- :red[Do not] describe things that might have happened in the future or past.")
-    st.write("- :red[Do not] describe what a person might say.")
-    st.write("- :red[Do not] give people proper names.")
-    st.write("- The sentences should contain at least :blue[{} words].".format(caption_length))
-    st.write(" ")
-    st.write("Note: The word counter may take a second to refresh as you type; click outside the text area to see the updated count.")
+    st.markdown("#### Carefully read the instructions on the left in the sidebar, then write descriptions for the images below accordingly. ####")
     st.write(" ")
     st.write(" ")
     st.write(" ")
+    
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.markdown("# Instructions #")
+    st.sidebar.write("**We show you 10 images. Write a description for each image, following these instructions:**")
+    st.sidebar.write("- Describe all the :blue[important parts] of the scene.")
+    st.sidebar.write("- :red[Do not] start the sentences with \"There is\".")
+    st.sidebar.write("- :red[Do not] describe unimportant details.")
+    st.sidebar.write("- :red[Do not] describe things that might have happened in the future or past.")
+    st.sidebar.write("- :red[Do not] describe what a person might say.")
+    st.sidebar.write("- :red[Do not] give people proper names.")
+    st.sidebar.write("- The sentences should contain *at least* :blue[{} words], but feel free to make it ".format(caption_length), \
+             "as long as you'd like to include the information requested in the instructions.")
+    st.sidebar.write(" ")
+    st.sidebar.write("Note: The word counter may take a second to refresh as you type; click outside the text area to see the updated count.")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
     
     # Load uncaptioned images
     uncaptioned_df, sheet = get_uncaptioned_images()
